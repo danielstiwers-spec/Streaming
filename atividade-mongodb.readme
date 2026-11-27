@@ -1,0 +1,146 @@
+# Banco de Dados NoSQL — Prática de CRUD no MongoDB (mongosh)
+
+**Aluno(a):** ____________________  
+**Turma:** ____________________  
+**Data:** ____ / ____ / ________  
+**Nota:** ____________________
+
+> Roteiro para executar no `mongosh`. Os comandos abaixo estão organizados em sequência e não foram executados.
+
+## Etapa 1 — Inserção de documentos
+
+Selecione o banco de dados `streaming`:
+
+```javascript
+use streaming
+```
+
+Insira o filme Matrix:
+
+```javascript
+db.filmes.insertOne({
+  titulo: "Matrix",
+  genero: "Ficção Científica",
+  ano: 1999,
+  nota: 9.0
+})
+```
+
+Insira os outros quatro filmes em um único comando:
+
+```javascript
+db.filmes.insertMany([
+  {
+    titulo: "O Poderoso Chefão",
+    genero: "Drama",
+    ano: 1972,
+    nota: 9.5,
+    oscars: 3
+  },
+  {
+    titulo: "Toy Story",
+    genero: "Animação",
+    ano: 1995,
+    nota: 8.5,
+    idiomas: ["Português", "Inglês", "Espanhol"]
+  },
+  {
+    titulo: "Vingadores: Ultimato",
+    genero: "Ação",
+    ano: 2019,
+    nota: 8.8
+  },
+  {
+    titulo: "Lanterna Verde",
+    genero: "Ação",
+    ano: 2011,
+    nota: 5.5
+  }
+])
+```
+
+## Etapa 2 — Consultas
+
+Exiba todos os documentos:
+
+```javascript
+db.filmes.find()
+```
+
+Busque filmes do gênero Ação:
+
+```javascript
+db.filmes.find({ genero: "Ação" })
+```
+
+Busque filmes lançados a partir de 2000, inclusive:
+
+```javascript
+db.filmes.find({ ano: { $gte: 2000 } })
+```
+
+Exiba somente `titulo` e `nota`, ocultando `_id`:
+
+```javascript
+db.filmes.find({}, { _id: 0, titulo: 1, nota: 1 })
+```
+
+Conte os filmes cadastrados:
+
+```javascript
+db.filmes.countDocuments({})
+```
+
+## Etapa 3 — Atualização e remoção
+
+Atualize a nota de Matrix:
+
+```javascript
+db.filmes.updateOne(
+  { titulo: "Matrix" },
+  { $set: { nota: 9.2 } }
+)
+```
+
+Adicione 0.5 à nota de todos os filmes de Ação:
+
+```javascript
+db.filmes.updateMany(
+  { genero: "Ação" },
+  { $inc: { nota: 0.5 } }
+)
+```
+
+Adicione `destaque: true` aos filmes com nota maior ou igual a 9.0:
+
+```javascript
+db.filmes.updateMany(
+  { nota: { $gte: 9.0 } },
+  { $set: { destaque: true } }
+)
+```
+
+Confira os filmes com nota menor que 7.0:
+
+```javascript
+db.filmes.find({ nota: { $lt: 7.0 } })
+```
+
+Remova esses filmes:
+
+```javascript
+db.filmes.deleteMany({ nota: { $lt: 7.0 } })
+```
+
+Confira quantos filmes restaram:
+
+```javascript
+db.filmes.countDocuments({})
+```
+
+Após executar a sequência, devem restar **4 filmes**.
+
+## Desafio de conceito
+
+- Apagar todos os documentos e manter a coleção vazia: `db.filmes.deleteMany({})`
+- Excluir a coleção inteira do banco: `db.filmes.drop()`
